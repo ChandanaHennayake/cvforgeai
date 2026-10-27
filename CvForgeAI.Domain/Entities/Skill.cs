@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Domain.Entities;
+namespace CvForgeAI.Domain.Entities;
 
 public class Skill
 {
