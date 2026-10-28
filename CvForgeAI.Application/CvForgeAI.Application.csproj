@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
@@ -20,6 +21,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CvForgeAI.Domain\CvForgeAI.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Validators\Certificate\" />
+    <Folder Include="Validators\Education\" />
+    <Folder Include="Validators\Experience\" />
+    <Folder Include="Validators\Resume\" />
+    <Folder Include="Validators\Project\" />
   </ItemGroup>
 
 </Project>
