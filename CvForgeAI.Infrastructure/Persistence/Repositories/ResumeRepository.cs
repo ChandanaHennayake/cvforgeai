@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Domain.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -49,4 +49,8 @@ public class ResumeRepository : IResumeRepository
             .FirstOrDefaultAsync(x => x.Id == resumeId);
     }
 
+    public void Delete(Resume resume)
+    {
+        _context.Resumes.Remove(resume);
+    }
 }

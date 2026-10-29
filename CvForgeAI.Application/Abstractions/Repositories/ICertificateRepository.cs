@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Domain.Entities;
+using CvForgeAI.Domain.Entities;
 
 namespace CvForgeAI.Application.Abstractions.Repositories;
 
@@ -8,6 +8,10 @@ public interface ICertificateRepository
 
     Task<List<Certificate>> GetByResumeIdAsync(
         int resumeId);
+
+    Task<Certificate?> GetByIdAsync(int id);
+
+    void Delete(Certificate certificate);
 
     Task SaveChangesAsync();
 }

@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.DTO.Certificate;
+using CvForgeAI.Application.DTO.Certificate;
 
 namespace CvForgeAI.Application.Services.Certificates;
 
@@ -11,4 +11,8 @@ public interface ICertificateService
     Task<List<CertificateResponse>> GetResumeCertificatesAsync(
         Guid userId,
         int resumeId);
-} 
+
+    Task DeleteAsync(
+        Guid userId,
+        int certificateId);
+}

@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Skill;
 using CvForgeAI.Application.Exceptions;
 using CvForgeAI.Domain.Entities;
@@ -29,8 +29,7 @@ public class SkillService : ISkillService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-        "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var skill = new Skill
@@ -41,7 +40,6 @@ public class SkillService : ISkillService
         };
 
         await _skillRepository.AddAsync(skill);
-
         await _skillRepository.SaveChangesAsync();
 
         return new SkillResponse
@@ -64,8 +62,7 @@ public class SkillService : ISkillService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-     "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var skills = await _skillRepository
@@ -78,5 +75,25 @@ public class SkillService : ISkillService
             Level = x.Level,
             ResumeId = x.ResumeId
         }).ToList();
+    }
+
+    public async Task DeleteAsync(
+        Guid userId,
+        int skillId)
+    {
+        var skill = await _skillRepository.GetByIdAsync(skillId);
+        if (skill == null)
+        {
+            throw new NotFoundException("Skill not found.");
+        }
+
+        var ownsResume = await _resumeRepository.ResumeBelongsToUserAsync(skill.ResumeId, userId);
+        if (!ownsResume)
+        {
+            throw new NotFoundException("Skill not found.");
+        }
+
+        _skillRepository.Delete(skill);
+        await _skillRepository.SaveChangesAsync();
     }
 }

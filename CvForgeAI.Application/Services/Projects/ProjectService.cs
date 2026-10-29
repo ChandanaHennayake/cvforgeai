@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Project;
 using CvForgeAI.Application.Exceptions;
 using CvForgeAI.Domain.Entities;
@@ -29,7 +29,7 @@ public class ProjectService : IProjectService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var project = new Project
@@ -43,7 +43,6 @@ public class ProjectService : IProjectService
         };
 
         await _projectRepository.AddAsync(project);
-
         await _projectRepository.SaveChangesAsync();
 
         return new ProjectResponse
@@ -69,8 +68,7 @@ public class ProjectService : IProjectService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-    "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var projects = await _projectRepository
@@ -86,5 +84,25 @@ public class ProjectService : IProjectService
             LiveUrl = x.LiveUrl,
             ResumeId = x.ResumeId
         }).ToList();
+    }
+
+    public async Task DeleteAsync(
+        Guid userId,
+        int projectId)
+    {
+        var project = await _projectRepository.GetByIdAsync(projectId);
+        if (project == null)
+        {
+            throw new NotFoundException("Project not found.");
+        }
+
+        var ownsResume = await _resumeRepository.ResumeBelongsToUserAsync(project.ResumeId, userId);
+        if (!ownsResume)
+        {
+            throw new NotFoundException("Project not found.");
+        }
+
+        _projectRepository.Delete(project);
+        await _projectRepository.SaveChangesAsync();
     }
 }

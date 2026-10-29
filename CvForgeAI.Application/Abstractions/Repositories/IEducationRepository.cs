@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Domain.Entities;
+using CvForgeAI.Domain.Entities;
 
 namespace CvForgeAI.Application.Abstractions.Repositories;
 
@@ -8,6 +8,10 @@ public interface IEducationRepository
 
     Task<List<Education>> GetByResumeIdAsync(
         int resumeId);
+
+    Task<Education?> GetByIdAsync(int id);
+
+    void Delete(Education education);
 
     Task SaveChangesAsync();
 }

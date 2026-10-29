@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.DTO.Project;
+using CvForgeAI.Application.DTO.Project;
 
 namespace CvForgeAI.Application.Services.Projects;
 
@@ -11,4 +11,8 @@ public interface IProjectService
     Task<List<ProjectResponse>> GetResumeProjectsAsync(
         Guid userId,
         int resumeId);
+
+    Task DeleteAsync(
+        Guid userId,
+        int projectId);
 }

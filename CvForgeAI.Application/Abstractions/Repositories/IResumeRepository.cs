@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Domain.Entities;
+using CvForgeAI.Domain.Entities;
 
 namespace CvForgeAI.Application.Abstractions.Repositories;
 
@@ -15,6 +15,8 @@ public interface IResumeRepository
 
     Task SaveChangesAsync();
 
-    Task<Domain.Entities.Resume?> GetByIdAsync(
-    int resumeId);
+    Task<Resume?> GetByIdAsync(
+        int resumeId);
+
+    void Delete(Resume resume);
 }

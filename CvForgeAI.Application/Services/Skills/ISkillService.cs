@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.DTO.Skill;
+using CvForgeAI.Application.DTO.Skill;
 
 namespace CvForgeAI.Application.Services.Skills;
 
@@ -11,4 +11,8 @@ public interface ISkillService
     Task<List<SkillResponse>> GetResumeSkillsAsync(
         Guid userId,
         int resumeId);
+
+    Task DeleteAsync(
+        Guid userId,
+        int skillId);
 }

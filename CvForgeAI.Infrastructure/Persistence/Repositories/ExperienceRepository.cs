@@ -1,7 +1,5 @@
-﻿
 using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Domain.Entities;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace CvForgeAI.Infrastructure.Persistence.Repositories;
@@ -26,6 +24,17 @@ public class ExperienceRepository : IExperienceRepository
         return await _context.Experiences
             .Where(x => x.ResumeId == resumeId)
             .ToListAsync();
+    }
+
+    public async Task<Experience?> GetByIdAsync(int id)
+    {
+        return await _context.Experiences
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public void Delete(Experience experience)
+    {
+        _context.Experiences.Remove(experience);
     }
 
     public async Task SaveChangesAsync()

@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.DTO.Experience;
+using CvForgeAI.Application.DTO.Experience;
 
 namespace CvForgeAI.Application.Services.Experience;
 
@@ -11,4 +11,13 @@ public interface IExperienceService
     Task<List<ExperienceResponse>> GetResumeExperiencesAsync(
         Guid userId,
         int resumeId);
+
+    Task UpdateAsync(
+        Guid userId,
+        int experienceId,
+        UpdateExperienceRequest request);
+
+    Task DeleteAsync(
+        Guid userId,
+        int experienceId);
 }

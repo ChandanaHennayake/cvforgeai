@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Certificate;
 using CvForgeAI.Application.Exceptions;
 using CvForgeAI.Domain.Entities;
@@ -29,8 +29,7 @@ public class CertificateService : ICertificateService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-     "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var certificate = new Certificate
@@ -43,7 +42,6 @@ public class CertificateService : ICertificateService
         };
 
         await _certificateRepository.AddAsync(certificate);
-
         await _certificateRepository.SaveChangesAsync();
 
         return new CertificateResponse
@@ -68,8 +66,7 @@ public class CertificateService : ICertificateService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-     "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var certificates = await _certificateRepository
@@ -84,5 +81,25 @@ public class CertificateService : ICertificateService
             CredentialUrl = x.CredentialUrl,
             ResumeId = x.ResumeId
         }).ToList();
+    }
+
+    public async Task DeleteAsync(
+        Guid userId,
+        int certificateId)
+    {
+        var certificate = await _certificateRepository.GetByIdAsync(certificateId);
+        if (certificate == null)
+        {
+            throw new NotFoundException("Certificate not found.");
+        }
+
+        var ownsResume = await _resumeRepository.ResumeBelongsToUserAsync(certificate.ResumeId, userId);
+        if (!ownsResume)
+        {
+            throw new NotFoundException("Certificate not found.");
+        }
+
+        _certificateRepository.Delete(certificate);
+        await _certificateRepository.SaveChangesAsync();
     }
 }

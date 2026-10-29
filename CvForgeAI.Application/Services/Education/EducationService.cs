@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Education;
 using CvForgeAI.Application.Exceptions;
 
@@ -28,8 +28,7 @@ public class EducationService : IEducationService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-    "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var education = new Domain.Entities.Education
@@ -44,7 +43,6 @@ public class EducationService : IEducationService
         };
 
         await _educationRepository.AddAsync(education);
-
         await _educationRepository.SaveChangesAsync();
 
         return new EducationResponse
@@ -71,8 +69,7 @@ public class EducationService : IEducationService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-    "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var educations = await _educationRepository
@@ -89,5 +86,25 @@ public class EducationService : IEducationService
             IsCurrentlyStudying = x.IsCurrentlyStudying,
             ResumeId = x.ResumeId
         }).ToList();
+    }
+
+    public async Task DeleteAsync(
+        Guid userId,
+        int educationId)
+    {
+        var education = await _educationRepository.GetByIdAsync(educationId);
+        if (education == null)
+        {
+            throw new NotFoundException("Education not found.");
+        }
+
+        var ownsResume = await _resumeRepository.ResumeBelongsToUserAsync(education.ResumeId, userId);
+        if (!ownsResume)
+        {
+            throw new NotFoundException("Education not found.");
+        }
+
+        _educationRepository.Delete(education);
+        await _educationRepository.SaveChangesAsync();
     }
 }

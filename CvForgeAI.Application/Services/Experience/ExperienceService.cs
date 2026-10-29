@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Experience;
 using CvForgeAI.Application.Exceptions;
 
@@ -28,8 +28,7 @@ public class ExperienceService : IExperienceService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-     "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var experience = new Domain.Entities.Experience
@@ -44,7 +43,6 @@ public class ExperienceService : IExperienceService
         };
 
         await _experienceRepository.AddAsync(experience);
-
         await _experienceRepository.SaveChangesAsync();
 
         return new ExperienceResponse
@@ -71,8 +69,7 @@ public class ExperienceService : IExperienceService
 
         if (!resumeExists)
         {
-            throw new NotFoundException(
-      "Resume not found.");
+            throw new NotFoundException("Resume not found.");
         }
 
         var experiences = await _experienceRepository
@@ -89,5 +86,52 @@ public class ExperienceService : IExperienceService
             IsCurrentJob = x.IsCurrentJob,
             ResumeId = x.ResumeId
         }).ToList();
+    }
+
+    public async Task UpdateAsync(
+        Guid userId,
+        int experienceId,
+        UpdateExperienceRequest request)
+    {
+        var experience = await _experienceRepository.GetByIdAsync(experienceId);
+        if (experience == null)
+        {
+            throw new NotFoundException("Experience not found.");
+        }
+
+        var ownsResume = await _resumeRepository.ResumeBelongsToUserAsync(experience.ResumeId, userId);
+        if (!ownsResume)
+        {
+            throw new NotFoundException("Experience not found.");
+        }
+
+        experience.CompanyName = request.CompanyName;
+        experience.Position = request.Position;
+        experience.Description = request.Description;
+        experience.StartDate = request.StartDate;
+        experience.EndDate = request.EndDate;
+        experience.IsCurrentJob = request.IsCurrentJob;
+
+        await _experienceRepository.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(
+        Guid userId,
+        int experienceId)
+    {
+        var experience = await _experienceRepository.GetByIdAsync(experienceId);
+        if (experience == null)
+        {
+            throw new NotFoundException("Experience not found.");
+        }
+
+        var ownsResume = await _resumeRepository.ResumeBelongsToUserAsync(experience.ResumeId, userId);
+        if (!ownsResume)
+        {
+            throw new NotFoundException("Experience not found.");
+        }
+
+        _experienceRepository.Delete(experience);
+        await _experienceRepository.SaveChangesAsync();
     }
 }

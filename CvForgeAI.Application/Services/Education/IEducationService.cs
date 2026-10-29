@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.DTO.Education;
+using CvForgeAI.Application.DTO.Education;
 
 namespace CvForgeAI.Application.Services.Education;
 
@@ -11,4 +11,8 @@ public interface IEducationService
     Task<List<EducationResponse>> GetResumeEducationsAsync(
         Guid userId,
         int resumeId);
+
+    Task DeleteAsync(
+        Guid userId,
+        int educationId);
 }

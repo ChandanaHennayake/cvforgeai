@@ -1,6 +1,5 @@
-﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Domain.Entities;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace CvForgeAI.Infrastructure.Persistence.Repositories;
@@ -25,6 +24,17 @@ public class ProjectRepository : IProjectRepository
         return await _context.Projects
             .Where(x => x.ResumeId == resumeId)
             .ToListAsync();
+    }
+
+    public async Task<Project?> GetByIdAsync(int id)
+    {
+        return await _context.Projects
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public void Delete(Project project)
+    {
+        _context.Projects.Remove(project);
     }
 
     public async Task SaveChangesAsync()
