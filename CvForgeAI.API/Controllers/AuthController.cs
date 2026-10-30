@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.DTO.Auth;
+using CvForgeAI.Application.DTO.Auth;
 using CvForgeAI.Application.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,11 +48,8 @@ public class AuthController : ControllerBase
     public IActionResult Me()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
         var fullName = User.FindFirst(ClaimTypes.Name)?.Value;
-
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
-
         var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
         return Ok(new

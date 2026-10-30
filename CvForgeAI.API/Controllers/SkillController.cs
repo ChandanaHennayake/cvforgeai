@@ -1,9 +1,7 @@
-﻿using CvForgeAI.Application.DTO.Skill;
-
+using CvForgeAI.Application.DTO.Skill;
 using CvForgeAI.Application.Services.Skills;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using System.Security.Claims;
 
 namespace CvForgeAI.API.Controllers;
@@ -15,19 +13,15 @@ public class SkillController : ControllerBase
 {
     private readonly ISkillService _skillService;
 
-    public SkillController(
-        ISkillService skillService)
+    public SkillController(ISkillService skillService)
     {
         _skillService = skillService;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(
-        CreateSkillRequest request)
+    public async Task<IActionResult> Create(CreateSkillRequest request)
     {
-        var userId = User
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("Invalid token.");
@@ -41,22 +35,34 @@ public class SkillController : ControllerBase
     }
 
     [HttpGet("{resumeId}")]
-    public async Task<IActionResult> GetResumeSkills(
-        int resumeId)
+    public async Task<IActionResult> GetResumeSkills(int resumeId)
     {
-        var userId = User
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("Invalid token.");
         }
 
-        var result = await _skillService
-            .GetResumeSkillsAsync(
-                Guid.Parse(userId),
-                resumeId);
+        var result = await _skillService.GetResumeSkillsAsync(
+            Guid.Parse(userId),
+            resumeId);
 
         return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        await _skillService.DeleteAsync(
+            Guid.Parse(userId),
+            id);
+
+        return Ok(new { message = "Skill deleted successfully." });
     }
 }

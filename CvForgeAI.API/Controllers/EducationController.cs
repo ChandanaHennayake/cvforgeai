@@ -1,9 +1,7 @@
-﻿using CvForgeAI.Application.DTO.Education;
+using CvForgeAI.Application.DTO.Education;
 using CvForgeAI.Application.Services.Education;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using System.Security.Claims;
 
 namespace CvForgeAI.API.Controllers;
@@ -15,19 +13,15 @@ public class EducationController : ControllerBase
 {
     private readonly IEducationService _educationService;
 
-    public EducationController(
-        IEducationService educationService)
+    public EducationController(IEducationService educationService)
     {
         _educationService = educationService;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(
-        CreateEducationRequest request)
+    public async Task<IActionResult> Create(CreateEducationRequest request)
     {
-        var userId = User
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("Invalid token.");
@@ -41,22 +35,34 @@ public class EducationController : ControllerBase
     }
 
     [HttpGet("{resumeId}")]
-    public async Task<IActionResult> GetResumeEducations(
-        int resumeId)
+    public async Task<IActionResult> GetResumeEducations(int resumeId)
     {
-        var userId = User
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("Invalid token.");
         }
 
-        var result = await _educationService
-            .GetResumeEducationsAsync(
-                Guid.Parse(userId),
-                resumeId);
+        var result = await _educationService.GetResumeEducationsAsync(
+            Guid.Parse(userId),
+            resumeId);
 
         return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        await _educationService.DeleteAsync(
+            Guid.Parse(userId),
+            id);
+
+        return Ok(new { message = "Education deleted successfully." });
     }
 }

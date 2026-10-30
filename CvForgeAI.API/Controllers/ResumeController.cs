@@ -1,4 +1,4 @@
-﻿using CvForgeAI.Application.DTO.Resume;
+using CvForgeAI.Application.DTO.Resume;
 using CvForgeAI.Application.Services.AI;
 using CvForgeAI.Application.Services.Pdf;
 using CvForgeAI.Application.Services.Resume;
@@ -64,6 +64,92 @@ public class ResumeController : ControllerBase
                 Guid.Parse(userId));
 
         return Ok(resumes);
+    }
+
+    [HttpGet("{resumeId}")]
+    public async Task<IActionResult> GetById(int resumeId)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        var resume = await _resumeService.GetByIdAsync(
+            Guid.Parse(userId),
+            resumeId);
+
+        return Ok(resume);
+    }
+
+    [HttpGet("{resumeId}/full")]
+    public async Task<IActionResult> GetFull(int resumeId)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        var fullResume = await _resumeService.GetFullResumeAsync(
+            Guid.Parse(userId),
+            resumeId);
+
+        return Ok(fullResume);
+    }
+
+    [HttpPost("{resumeId}/duplicate")]
+    public async Task<IActionResult> Duplicate(int resumeId)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        var duplicated = await _resumeService.DuplicateResumeAsync(
+            Guid.Parse(userId),
+            resumeId);
+
+        return Ok(duplicated);
+    }
+
+    [HttpPut("{resumeId}")]
+    public async Task<IActionResult> Update(int resumeId, UpdateResumeRequest request)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        await _resumeService.UpdateAsync(
+            Guid.Parse(userId),
+            resumeId,
+            request);
+
+        return Ok(new { message = "Resume updated successfully." });
+    }
+
+    [HttpDelete("{resumeId}")]
+    public async Task<IActionResult> Delete(int resumeId)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        await _resumeService.DeleteAsync(
+            Guid.Parse(userId),
+            resumeId);
+
+        return Ok(new { message = "Resume deleted successfully." });
     }
 
     [HttpGet("{resumeId}/pdf")]

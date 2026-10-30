@@ -1,9 +1,7 @@
-﻿using CvForgeAI.Application.DTO.Certificate;
+using CvForgeAI.Application.DTO.Certificate;
 using CvForgeAI.Application.Services.Certificates;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using System.Security.Claims;
 
 namespace CvForgeAI.API.Controllers;
@@ -15,19 +13,15 @@ public class CertificateController : ControllerBase
 {
     private readonly ICertificateService _certificateService;
 
-    public CertificateController(
-        ICertificateService certificateService)
+    public CertificateController(ICertificateService certificateService)
     {
         _certificateService = certificateService;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(
-        CreateCertificateRequest request)
+    public async Task<IActionResult> Create(CreateCertificateRequest request)
     {
-        var userId = User
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("Invalid token.");
@@ -41,22 +35,34 @@ public class CertificateController : ControllerBase
     }
 
     [HttpGet("{resumeId}")]
-    public async Task<IActionResult> GetResumeCertificates(
-        int resumeId)
+    public async Task<IActionResult> GetResumeCertificates(int resumeId)
     {
-        var userId = User
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("Invalid token.");
         }
 
-        var result = await _certificateService
-            .GetResumeCertificatesAsync(
-                Guid.Parse(userId),
-                resumeId);
+        var result = await _certificateService.GetResumeCertificatesAsync(
+            Guid.Parse(userId),
+            resumeId);
 
         return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        await _certificateService.DeleteAsync(
+            Guid.Parse(userId),
+            id);
+
+        return Ok(new { message = "Certificate deleted successfully." });
     }
 }

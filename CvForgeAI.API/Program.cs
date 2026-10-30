@@ -9,17 +9,33 @@ using CvForgeAI.Application.Services.Pdf;
 using CvForgeAI.Application.Services.Projects;
 using CvForgeAI.Application.Services.Resume;
 using CvForgeAI.Application.Services.Skills;
+using CvForgeAI.Application.Validators.Auth;
 using CvForgeAI.Infrastructure.Persistence;
 using CvForgeAI.Infrastructure.Persistence.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+
+//==========================================Validdators==============================================================
+
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
+
+
+//==========================================Validdators End ==============================================================
+
+
+
 
 builder.Services.AddScoped<IResumeService, ResumeService>();
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
@@ -84,6 +100,17 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -94,6 +121,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 app.UseMiddleware<ExceptionMiddleware>();
 
